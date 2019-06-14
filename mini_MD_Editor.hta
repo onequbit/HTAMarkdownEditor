@@ -15,8 +15,8 @@
             navigable        = "no"
             showInTaskbar    = "yes"
             singleInstance    = "yes"
-            scroll = "no"
-            sysmenu            = "no"
+            scroll = "yes"
+            sysmenu            = "yes"
             windowState        = "normal"  
             VERSION="1.0"
         />
@@ -25,15 +25,11 @@
         
     </head>
     <body>
-        <!-- <div class="form-group">
-            <label for="input-fileName">File name</label>            
-            <input type="button" id="btn-save" value="Save">
-        </div> -->
-        <ul class="editor-menu">
+        
+        <ul class="editor-menu" id='menubar'>
             <li class="editor-menu-item"><a href="#home" onclick="newFile()">New</a></li>
             <li class="editor-menu-item"><a href="#news" onclick="openFile()">Open</a></li>
             <li class="editor-menu-item"><a href="#btn-save" onclick="doSave()">Save As</a><input type="text" class="form-control" id="input-fileName" value="textFile" placeholder="Enter file name"></li>
-            <!-- <li style="float:right"><a class="active" href="#about">About</a></li> -->
         </ul>            
         <div class="div-table">
             <div class="div-row">
@@ -42,20 +38,16 @@
                 </div>
                 <div class="div-row-item" id="preview"></div>
             </div>
-        </div>
-        <script src="download2.js"></script>
+        </div>        
         <script src="marked.min.js"></script>
+        <script src="download2.js"></script>
         <script type="text/javascript">
-            function setAutosize(){
-                // alert(window.innerHeight);
+            function resizeEditor(){
                 var editor = document.getElementById("file-contents");
-                var preview = document.getElementById("preview");
-                setTimeout(function(){                    
-                    editor.style.cssText = 'height:490; padding:0';                    
-                    editor.style.cssText = 'height:' + window.innerHeight + 'px';
-                    var previewStyle = preview.style.cssText;
-                    preview.style.cssText = previewStyle + 'width:' + editor.scrollWidth + 'px';
-                },100);
+                var preview = document.getElementById('preview');
+                resizeHeight = window.innerHeight - 55;
+                editor.style.height = resizeHeight + 'px'; 
+                preview.style.height = resizeHeight + 'px'; 
             }
 
             function newFile()
@@ -96,14 +88,13 @@
                 document.getElementById("preview").innerHTML = marked(text);
             }
             
-            // document.getElementById("btn-save").onclick = doSave; 
-            
-            var editor = document.getElementById("file-contents");            
+            window.addEventListener("resize", resizeEditor);
+
+            var editor = document.getElementById("file-contents");
             editor.addEventListener("change", updatePreview);
-            editor.addEventListener("keyup", updatePreview);            
-            
+            editor.addEventListener("keyup", updatePreview);                        
             document.onmousemove = updatePreview;
-            document.onload = setAutosize();
+            document.onload = resizeEditor();
             
         </script>
         <style>
@@ -113,37 +104,63 @@
                 margin: 0px;
             }
             div.div-table {
+                position: absolute;
+                top: 50px;
+                left: 0px;
+                z-index: -1;
                 display: table;
-                background-color: white;
+                background-color: white;                
             }
-            div.div-row {
-                display: table-row;
+
+            div.div-row {                
+                display: table-row;                
             }
+
             div.div-row-item {
                 display: table-cell;                
             }
-            #file-contents {
+
+            #file-contents {                
                 border-style: inset;
+                -moz-box-sizing:border-box;
+                -webkit-box-sizing:border-box;
+                box-sizing:border-box;
+                overflow-y: scroll;
             }
-            #preview {
+            #preview {                                
                 border-style:outset;
                 background-color: white;
+                width: 100%;
+                border-style: inset;                
             }
+
             #input-fileName {
                 float: left;
                 margin: auto;
             }
+
             body {
                 border: 0px;
                 margin: 0px;
                 background-color: #333;
+                overflow-y: scroll;                
             }
-            ul.editor-menu {                
+
+            #menubar {
+                height: 50px;                
+            }
+
+            ul.editor-menu {
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                z-index: 100;                              
                 list-style-type: none;
                 margin: 0;
                 padding: 0;
-                overflow: hidden;
+                overflow-y: hidden;
                 background-color: #333;
+                width: 100%;                
             }
 
             li.editor-menu-item {
