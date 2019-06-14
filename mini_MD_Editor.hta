@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>mini MD editor (HTA)</title>
+        <HTA:APPLICATION
+            APPLICATIONNAME="mini_MD_editor"
+            ID="mini_MD_editor"
+            border = "thin"
+            borderStyle        = "none"
+            caption            = "yes"
+            contextMenu        = "no"
+            maximizeButton    = "yes"
+            minimizeButton    = "yes"
+            navigable        = "no"
+            showInTaskbar    = "yes"
+            singleInstance    = "yes"
+            scroll = "no"
+            sysmenu            = "no"
+            windowState        = "normal"  
+            VERSION="1.0"
+        />
+
+        <meta charset="utf-8" />                
+        
+    </head>
+    <body>
+        <!-- <div class="form-group">
+            <label for="input-fileName">File name</label>            
+            <input type="button" id="btn-save" value="Save">
+        </div> -->
+        <ul class="editor-menu">
+            <li class="editor-menu-item"><a href="#home" onclick="newFile()">New</a></li>
+            <li class="editor-menu-item"><a href="#news" onclick="openFile()">Open</a></li>
+            <li class="editor-menu-item"><a href="#btn-save" onclick="doSave()">Save As</a><input type="text" class="form-control" id="input-fileName" value="textFile" placeholder="Enter file name"></li>
+            <!-- <li style="float:right"><a class="active" href="#about">About</a></li> -->
+        </ul>            
+        <div class="div-table">
+            <div class="div-row">
+                <div class="div-row-item">
+                    <textarea id="file-contents" cols="70" ></textarea>
+                </div>
+                <div class="div-row-item" id="preview"></div>
+            </div>
+        </div>
+        <script src="download2.js"></script>
+        <script src="marked.min.js"></script>
+        <script type="text/javascript">
+            function setAutosize(){
+                // alert(window.innerHeight);
+                var editor = document.getElementById("file-contents");
+                var preview = document.getElementById("preview");
+                setTimeout(function(){                    
+                    editor.style.cssText = 'height:490; padding:0';                    
+                    editor.style.cssText = 'height:' + window.innerHeight + 'px';
+                    var previewStyle = preview.style.cssText;
+                    preview.style.cssText = previewStyle + 'width:' + editor.scrollWidth + 'px';
+                },100);
+            }
+
+            function newFile()
+            {                
+                document.getElementById("file-contents").value = "";
+                document.getElementById("input-fileName").value = "";
+            }
+
+            function openFile()
+            {
+                var fileSelector = document.createElement('input');
+                fileSelector.setAttribute('accept','.md');
+                fileSelector.setAttribute('type', 'file');
+                fileSelector.click();
+                if (fileSelector.value)
+                {
+                    var file = fileSelector.files[0];
+                    var fileReader = new FileReader(); 
+                    fileReader.onload = function (e) { 
+                        document.getElementById('file-contents').innerText = fileReader.result; 
+                    } 
+                    fileReader.readAsText(file);
+                }
+                
+                return false;
+            }
+
+            function doSave()
+            {                
+                var text = document.getElementById("file-contents").value;
+                var filename = document.getElementById("input-fileName").value;
+                download(text, filename, "text/plain");
+            }
+
+            function updatePreview()
+            {
+                var text = document.getElementById("file-contents").value;
+                document.getElementById("preview").innerHTML = marked(text);
+            }
+            
+            // document.getElementById("btn-save").onclick = doSave; 
+            
+            var editor = document.getElementById("file-contents");            
+            editor.addEventListener("change", updatePreview);
+            editor.addEventListener("keyup", updatePreview);            
+            
+            document.onmousemove = updatePreview;
+            document.onload = setAutosize();
+            
+        </script>
+        <style>
+            div {
+                vertical-align: top;
+                border: 0px;
+                margin: 0px;
+            }
+            div.div-table {
+                display: table;
+                background-color: white;
+            }
+            div.div-row {
+                display: table-row;
+            }
+            div.div-row-item {
+                display: table-cell;                
+            }
+            #file-contents {
+                border-style: inset;
+            }
+            #preview {
+                border-style:outset;
+                background-color: white;
+            }
+            #input-fileName {
+                float: left;
+                margin: auto;
+            }
+            body {
+                border: 0px;
+                margin: 0px;
+                background-color: #333;
+            }
+            ul.editor-menu {                
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: #333;
+            }
+
+            li.editor-menu-item {
+                float: left;
+            }
+
+            li.editor-menu-item a {
+                float: left;
+                display: block;
+                color: white;
+                text-align: center;
+                padding: 12px 14px;
+                text-decoration: none;
+            }
+
+            li.editor-menu-item a:hover:not(.active) {
+                background-color: #111;
+            }
+
+        </style>
+    </body>
+</html>
