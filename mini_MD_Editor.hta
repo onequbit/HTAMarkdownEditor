@@ -51,9 +51,13 @@
             }
 
             function newFile()
-            {                
-                document.getElementById("file-contents").value = "";
-                document.getElementById("input-fileName").value = "";
+            {
+                var confirmed = confirm("Are you sure?");
+                if (confirmed)
+                {
+                    document.getElementById("file-contents").value = "";
+                    document.getElementById("input-fileName").value = "";
+                }
             }
 
             function openFile()
